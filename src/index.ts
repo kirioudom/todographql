@@ -4,7 +4,7 @@ import { createConnection } from "typeorm";
 import expressGraphQL from "express-graphql";
 import { rootSchema } from "./schema/schema";
 import cors from "cors";
-import { connect } from "http2";
+
 const app = express();
 
 const main = async () => {
