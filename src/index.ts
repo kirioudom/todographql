@@ -1,13 +1,12 @@
 import "reflect-metadata";
 import express from "express";
 import { createConnection } from "typeorm";
-import expressGraphQL from "express-graphql";
-import { rootSchema } from "./schema/schema";
 import cors from "cors";
-import { ApolloServer } from "apollo-server";
 import resolvers from "./schema/resolver";
-import typeDefs from "./schema/apollo.schema";
-const app = express();
+import typeDefs from "./schema/schema";
+import { ApolloServer } from "apollo-server-express";
+import bodyParser from "body-parser";
+const expressApp = express();
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
 const main = async () => {
@@ -19,21 +18,11 @@ const main = async () => {
     throw new Error("Can't connect database");
   }
 };
-
 main().catch(e => console.log(e));
-// app.use(cors());
+expressApp.use(cors());
+expressApp.use(bodyParser.json());
+apolloServer.applyMiddleware({ app: expressApp, path: "/graphql" });
 
-// app.use(
-//   "/graphql",
-//   expressGraphQL({
-//     schema: rootSchema,
-//     graphiql: true
-//   })
-// );
-
-apolloServer.listen().then(({ url }) => {
-  console.log(`server has started at port ${url}`);
+expressApp.listen(3500, () => {
+  console.log(`server has started on port 3500`);
 });
-// app.listen(3500, () => {
-//   console.log("server has started");
-// });
